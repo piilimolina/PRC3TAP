@@ -31,8 +31,7 @@ public class MyUI extends UI {
 
         Button button = new Button("Click Me");
         button.addClickListener(e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
+            layout.addComponent(new Label("Thanks " + name.getValue() + ", it works!"));
         });
         
         layout.addComponents(name, button);
@@ -44,4 +43,6 @@ public class MyUI extends UI {
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
     public static class MyUIServlet extends VaadinServlet {
     }
+    
+    
 }
