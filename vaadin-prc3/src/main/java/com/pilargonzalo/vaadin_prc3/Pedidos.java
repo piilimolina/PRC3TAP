@@ -1,19 +1,28 @@
 package com.pilargonzalo.vaadin_prc3;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Pedidos {
-	public ArrayList<Producto> pedido;
+	public List<Producto> productos;
 	public Pedidos() {
-		pedido = new ArrayList<>();
+		productos = new ArrayList<>();
 	}
 	
-	public void addPedido(Producto p) {
-		pedido.add(p);
+	//Añadir un producto al pedido
+	public void addProdToPed(Producto p) {
+		productos.add(p);
 		
 	}
 	
-	public void getPedido() {
-		System.out.println("El pedido es el siguiente" + pedido);
+	//Eliminar un producto del pedido
+	public void deleteProdToP(Producto p) {
+		productos.remove(p);
 	}
-
+	
+	//Mostrar resumen del pedido
+	public List<Producto> getProductos(){
+		return productos;
+	}
+	
+	
 }

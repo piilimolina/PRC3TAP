@@ -7,10 +7,16 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -21,22 +27,105 @@ import com.vaadin.ui.VerticalLayout;
  */
 @Theme("mytheme")
 public class MyUI extends UI {
-
+	private Producto selectedProducto;
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        final VerticalLayout layout = new VerticalLayout();
+        Grid <Producto> grid = new Grid <Producto>();
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        Window subWindow = new Window("Detalles del producto");
+        VerticalLayout subContent = new VerticalLayout();
         
-        final TextField name = new TextField();
-        name.setCaption("Type your name here:");
-
-        Button button = new Button("Click Me");
-        button.addClickListener(e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() + ", it works!"));
+        Label labelNombre = new Label();
+        Label labelPrecio = new Label();
+        
+        Button buttonDelete = new Button("Delete Producto");
+        
+        buttonDelete.addClickListener(e -> {
+        	Pedidos p = new Pedidos();
+        	p.deleteProdToP(selectedProducto);
+        	grid.setItems(p.getProductos());
+        	removeWindow(subWindow);
         });
         
-        layout.addComponents(name, button);
+      
+        subContent.addComponents(labelNombre, labelPrecio, buttonDelete);
         
-        setContent(layout);
+        
+        subWindow.center();
+        subWindow.setContent(subContent);
+        //addWindow(subWindow);
+    	
+    	/* TABLE */
+    	grid.addColumn(Producto::getNombre).setCaption("Nombre");
+    	grid.addColumn(Producto::getPrecio).setCaption("Precio");
+    	grid.setSelectionMode(SelectionMode.SINGLE);
+    	
+    	grid.addItemClickListener(event -> {
+    		
+    		selectedProducto = event.getItem();
+    		
+        	//Notification.show("Value: " + event.getItem());
+        	labelNombre.setValue(selectedProducto.getNombre());
+        	labelPrecio.setValue(selectedProducto.getPrecio());
+        	
+        	
+        	
+        	removeWindow(subWindow);
+        	addWindow(subWindow);
+        	
+    	});
+    	
+    	
+    	/* FORM */
+    	
+    	
+    	FormLayout formLayout = new FormLayout();
+    	
+    	TextField textFieldNombre = new TextField("Nombre");
+    	TextField textFieldPrecio = new TextField("Precio");
+    	Button buttonAddProducto = new Button("Añadir");
+    			
+    	buttonAddProducto.addClickListener(e -> {
+    		
+    		Producto prod = new Producto(
+    				textFieldNombre.getValue(),
+    				textFieldPrecio.getValue()				
+    				);
+    		
+    		Pedidos p = new Pedidos();
+    		p.addProdToPed(prod);
+    		
+    		textFieldNombre.clear();
+    		textFieldPrecio.clear();
+    		
+    		
+    		grid.setItems(p.getProductos());
+    		
+    		
+    		Notification.show("Producto capturado! Ya tenemos " + 
+    				p.getProductos().size() + "!!",
+    				Notification.TYPE_TRAY_NOTIFICATION);
+    		
+    	});
+    	
+    	
+    	
+    	formLayout.addComponents(
+    			textFieldNombre, 
+    			textFieldPrecio, 
+    			buttonAddProducto
+    	);
+    	
+    
+    	horizontalLayout.addComponents(grid, formLayout);
+    	
+    	
+    	
+    	setContent(horizontalLayout);
+    	
+      
+        
+        
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
