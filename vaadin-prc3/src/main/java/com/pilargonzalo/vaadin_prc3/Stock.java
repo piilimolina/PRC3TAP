@@ -12,7 +12,6 @@ public class Stock {
 	//Añadir un producto al stock
 	public void addProdToStock(Producto p) {
 		productos.add(p);
-		
 	}
 	
 	//Eliminar un producto del stock

@@ -34,12 +34,14 @@ public class MyUI extends UI {
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
+		/*
+		 * VerticalLayout verticalLayout = new VerticalLayout();
+		 * verticalLayout.setMargin(false); Label l = new Label("Pilar Molina Tirado");
+		 * l.setContentMode(com.vaadin.shared.ui.ContentMode.HTML);
+		 */
 		Grid<Producto> grid = new Grid<Producto>();
-		VerticalLayout verticalLayout = new VerticalLayout();
-		verticalLayout.setMargin(false);
-		Label l = new Label("Pilar Molina Tirado");
-		l.setContentMode(com.vaadin.shared.ui.ContentMode.HTML);
 
+		/* VENTADA DE DETALLES DEL PRODUCTO */
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		Window subWindow = new Window("Detalles del producto");
 		VerticalLayout subContent = new VerticalLayout();
@@ -51,12 +53,14 @@ public class MyUI extends UI {
 		TextField textFieldNuevoNombre = new TextField("Nombre");
 		TextField textFieldNuevoPrecio = new TextField("Precio");
 
+		/* FUNCIONALIDAD BOTÓN "DELETE" */
 		buttonDelete.addClickListener(e -> {
 			stock.deleteProdToStock(selectedProducto);
 			grid.setItems(stock.getProductos());
 			removeWindow(subWindow);
 		});
 
+		/* FUNCIONALIDAD BOTÓN "MODIFICAR" */
 		buttonModificar.addClickListener(e -> {
 			stock.deleteProdToStock(selectedProducto);
 			grid.setItems(stock.getProductos());
@@ -80,14 +84,13 @@ public class MyUI extends UI {
 		subWindow.setContent(subContent);
 		// addWindow(subWindow);
 
-		/* TABLE */
-
+		/* TABLA DE PRODUCTOS */
+		/* INSERCIÓN EN LA TABLA */
 		grid.addColumn(Producto::getNombre).setCaption("Nombre");
 		grid.addColumn(Producto::getPrecio).setCaption("Precio");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
 		grid.addItemClickListener(event -> {
-
 			selectedProducto = event.getItem();
 
 			// Notification.show("Value: " + event.getItem());
@@ -96,19 +99,15 @@ public class MyUI extends UI {
 
 			removeWindow(subWindow);
 			addWindow(subWindow);
-
 		});
 
-		/* FORM */
-
+		/* FORMULARIO DE AÑADIR NUEVO PRODUCTO */
 		FormLayout formLayout = new FormLayout();
-
 		TextField textFieldNombre = new TextField("Nombre");
 		TextField textFieldPrecio = new TextField("Precio");
 		Button buttonAddProducto = new Button("Añadir");
 
 		buttonAddProducto.addClickListener(e -> {
-
 			Producto prod = new Producto(textFieldNombre.getValue(), textFieldPrecio.getValue());
 			stock.addProdToStock(prod);
 			textFieldNombre.clear();
@@ -116,14 +115,12 @@ public class MyUI extends UI {
 
 			grid.setItems(stock.getProductos());
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
-
 		});
-
+		
 		formLayout.addComponents(textFieldNombre, textFieldPrecio, buttonAddProducto);
 
-		horizontalLayout.addComponents(l, grid, formLayout);
+		horizontalLayout.addComponents(grid, formLayout);
 		setContent(horizontalLayout);
-
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
