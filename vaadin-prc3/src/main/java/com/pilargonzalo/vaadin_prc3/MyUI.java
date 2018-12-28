@@ -28,8 +28,6 @@ import com.vaadin.ui.Window;
 @Theme("mytheme")
 public class MyUI extends UI {
 	private Producto selectedProducto;
-	private Pedidos p = new Pedidos();
-	
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         Grid <Producto> grid = new Grid <Producto>();
@@ -43,6 +41,7 @@ public class MyUI extends UI {
         Button buttonDelete = new Button("Delete Producto");
         
         buttonDelete.addClickListener(e -> {
+        	Pedidos p = new Pedidos();
         	p.deleteProdToP(selectedProducto);
         	grid.setItems(p.getProductos());
         	removeWindow(subWindow);
@@ -93,6 +92,7 @@ public class MyUI extends UI {
     				textFieldPrecio.getValue()				
     				);
     		
+    		Pedidos p = new Pedidos();
     		p.addProdToPed(prod);
     		
     		textFieldNombre.clear();
