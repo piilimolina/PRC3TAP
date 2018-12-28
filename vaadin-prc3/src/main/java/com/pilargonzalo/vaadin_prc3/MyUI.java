@@ -59,17 +59,17 @@ public class MyUI extends UI {
 		TextField textFieldNuevoPrecio = new TextField("Precio");
 
 		buttonDelete.addClickListener(e -> {
-			p.deleteProdToPed(selectedProducto);
+			p.deleteProdToStock(selectedProducto);
 			grid.setItems(p.getProductos());
 			removeWindow(subWindow);
 		});
 		
 		buttonModificar.addClickListener(e -> {
-			p.deleteProdToPed(selectedProducto);
+			p.deleteProdToStock(selectedProducto);
 			grid.setItems(p.getProductos());
 			removeWindow(subWindow);
 			Producto prod = new Producto(textFieldNuevoNombre.getValue(), textFieldNuevoPrecio.getValue());
-			p.addProdToPed(prod);
+			p.addProdToStock(prod);
 			textFieldNuevoNombre.clear();
 			textFieldNuevoPrecio.clear();
 			grid.setItems(p.getProductos());	
@@ -109,7 +109,7 @@ public class MyUI extends UI {
 
 			Producto prod = new Producto(textFieldNombre.getValue(), textFieldPrecio.getValue());
 
-			p.addProdToPed(prod);
+			p.addProdToStock(prod);
 
 			textFieldNombre.clear();
 			textFieldPrecio.clear();
