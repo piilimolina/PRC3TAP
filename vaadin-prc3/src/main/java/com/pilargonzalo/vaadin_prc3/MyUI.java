@@ -27,6 +27,7 @@ import com.vaadin.ui.Window;
  * intended to be overridden to add component to the user interface and
  * initialize non-component functionality.
  */
+
 @Theme("mytheme")
 public class MyUI extends UI {
 	private Producto selectedProducto;
@@ -66,7 +67,8 @@ public class MyUI extends UI {
 			grid.setItems(stock.getProductos());
 			removeWindow(subWindow);
 
-			Producto prod = new Producto(textFieldNuevoNombre.getValue(), textFieldNuevoPrecio.getValue());
+			double nuevoPrecio = Double.parseDouble(textFieldNuevoPrecio.getValue());
+			Producto prod = new Producto(textFieldNuevoNombre.getValue(), nuevoPrecio);
 			stock.addProdToStock(prod);
 			textFieldNuevoNombre.clear();
 			textFieldNuevoPrecio.clear();
@@ -95,7 +97,7 @@ public class MyUI extends UI {
 
 			// Notification.show("Value: " + event.getItem());
 			labelNombre.setValue(selectedProducto.getNombre());
-			labelPrecio.setValue(selectedProducto.getPrecio());
+			labelPrecio.setValue(selectedProducto.getPrecio().toString());
 
 			removeWindow(subWindow);
 			addWindow(subWindow);
@@ -108,7 +110,8 @@ public class MyUI extends UI {
 		Button buttonAddProducto = new Button("Añadir");
 
 		buttonAddProducto.addClickListener(e -> {
-			Producto prod = new Producto(textFieldNombre.getValue(), textFieldPrecio.getValue());
+			double precio = Double.parseDouble(textFieldPrecio.getValue());
+			Producto prod = new Producto(textFieldNombre.getValue(), precio);
 			stock.addProdToStock(prod);
 			textFieldNombre.clear();
 			textFieldPrecio.clear();

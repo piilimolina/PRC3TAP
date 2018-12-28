@@ -3,9 +3,9 @@ package com.pilargonzalo.vaadin_prc3;
 public class Producto {
 	
 	public  String nombre;
-	public  String precio;
+	public  Double precio;
 	
-	public Producto(String nombre, String precio) {
+	public Producto(String nombre, Double precio) {
 		super(); 
 		this.nombre = nombre;
 		this.precio = precio;
@@ -19,11 +19,11 @@ public class Producto {
 		this.nombre = nombre;
 	}
 
-	public String getPrecio() {
+	public Double getPrecio() {
 		return precio;
 	}
 
-	public void setPrecio(String precio) {
+	public void setPrecio(Double precio) {
 		this.precio = precio;
 	}
 
