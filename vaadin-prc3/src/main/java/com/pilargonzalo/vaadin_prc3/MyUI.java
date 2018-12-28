@@ -30,7 +30,7 @@ import com.vaadin.ui.Window;
 @Theme("mytheme")
 public class MyUI extends UI {
 	private Producto selectedProducto;
-	private Pedidos p = new Pedidos();
+	private Stock stock = new Stock();
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -52,32 +52,29 @@ public class MyUI extends UI {
 		TextField textFieldNuevoPrecio = new TextField("Precio");
 
 		buttonDelete.addClickListener(e -> {
-			p.deleteProdToPed(selectedProducto);
-			grid.setItems(p.getProductos());
+			stock.deleteProdToStock(selectedProducto);
+			grid.setItems(stock.getProductos());
 			removeWindow(subWindow);
 		});
-		
+
 		buttonModificar.addClickListener(e -> {
-			p.deleteProdToPed(selectedProducto);
-			grid.setItems(p.getProductos());
+			stock.deleteProdToStock(selectedProducto);
+			grid.setItems(stock.getProductos());
 			removeWindow(subWindow);
-			
-	
+
 			Producto prod = new Producto(textFieldNuevoNombre.getValue(), textFieldNuevoPrecio.getValue());
-			p.addProdToPed(prod);
+			stock.addProdToStock(prod);
 			textFieldNuevoNombre.clear();
 			textFieldNuevoPrecio.clear();
 
-			grid.setItems(p.getProductos());
+			grid.setItems(stock.getProductos());
 
-			Notification.show("Producto capturado! Ya tenemos " + p.getProductos().size() + "!!",
-					Notification.TYPE_TRAY_NOTIFICATION);		
+			Notification.show("Producto capturado! Ya tenemos " + stock.getProductos().size() + "!!",
+					Notification.TYPE_TRAY_NOTIFICATION);
 		});
-		
-		
 
-
-		subContent.addComponents(labelNombre, labelPrecio,buttonDelete, textFieldNuevoNombre,textFieldNuevoPrecio,buttonModificar);
+		subContent.addComponents(labelNombre, labelPrecio, buttonDelete, textFieldNuevoNombre, textFieldNuevoPrecio,
+				buttonModificar);
 
 		subWindow.center();
 		subWindow.setContent(subContent);
@@ -108,32 +105,21 @@ public class MyUI extends UI {
 
 		TextField textFieldNombre = new TextField("Nombre");
 		TextField textFieldPrecio = new TextField("Precio");
-		// TextField textFieldNuevoNombre = new TextField("Nuevo Nombre");
-		// TextField textFieldNuevoPrecio = new TextField("Nuevo Precio");
 		Button buttonAddProducto = new Button("Añadir");
-		// Button buttonModProducto = new Button("Modificar");
 
 		buttonAddProducto.addClickListener(e -> {
 
 			Producto prod = new Producto(textFieldNombre.getValue(), textFieldPrecio.getValue());
-
-			p.addProdToPed(prod);
-
+			stock.addProdToStock(prod);
 			textFieldNombre.clear();
 			textFieldPrecio.clear();
 
-			grid.setItems(p.getProductos());
-
-			Notification.show("Producto capturado! Ya tenemos " + p.getProductos().size() + "!!",
-					Notification.TYPE_TRAY_NOTIFICATION);
+			grid.setItems(stock.getProductos());
+			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
 
 		});
 
-		formLayout.addComponents(textFieldNombre, textFieldPrecio, buttonAddProducto
-		// textFieldNuevoNombre,
-		// textFieldNuevoPrecio,
-		// buttonModProducto
-		);
+		formLayout.addComponents(textFieldNombre, textFieldPrecio, buttonAddProducto);
 
 		horizontalLayout.addComponents(l, grid, formLayout);
 		setContent(horizontalLayout);

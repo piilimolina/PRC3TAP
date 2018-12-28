@@ -3,20 +3,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Pedidos {
+public class Stock {
 	public List<Producto> productos;
-	public Pedidos() {
+	public Stock() {
 		productos = new ArrayList<>();
 	}
 	
-	//Añadir un producto al pedido
-	public void addProdToPed(Producto p) {
+	//Añadir un producto al stock
+	public void addProdToStock(Producto p) {
 		productos.add(p);
 		
 	}
 	
-	//Eliminar un producto del pedido
-	public void deleteProdToPed(Producto p) {
+	//Eliminar un producto del stock
+	public void deleteProdToStock(Producto p) {
 		productos.remove(p);
 	}	
 	//Mostrar resumen del pedido
