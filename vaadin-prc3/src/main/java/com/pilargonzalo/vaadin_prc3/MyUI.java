@@ -12,7 +12,6 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -49,8 +48,7 @@ public class MyUI extends UI {
         
         Button buttonDelete = new Button("Delete");
         Button buttonModificar= new Button("Modificar");
-        TextField textFieldNuevoNombre = new TextField("Nuevo Nombre");
-    	TextField textFieldNuevoPrecio = new TextField("Nuevo Precio");
+
         
         buttonDelete.addClickListener(e -> {
         	Pedidos p = new Pedidos();
@@ -59,17 +57,7 @@ public class MyUI extends UI {
         	removeWindow(subWindow);
         });
         
-        buttonModificar.addBlurListener(e -> {
-        	Producto n = new Producto(
-    				textFieldNuevoNombre.getValue(), 
-    				textFieldNuevoPrecio.getValue()
-    				);
-        	
-        	Pedidos p = new Pedidos();
-        	p.modificarProdToPed(selectedProducto, n);
-        	grid.setItems(p.getProductos());
-        	removeWindow(subWindow);
-        });
+        
         
       
         subContent.addComponents(labelNombre, labelPrecio, buttonDelete, buttonModificar);
@@ -137,34 +125,6 @@ public class MyUI extends UI {
     		
     	});
     	
-    	
-    	//Jejejejejeje modificar
-    	/*buttonModProducto.addClickListener(e -> {
-    		Producto n = new Producto(
-    				textFieldNuevoNombre.getValue(), 
-    				textFieldNuevoPrecio.getValue()
-    				);
-    		
-    		Producto prod = new Producto(
-    				textFieldNombre.getValue(),
-    				textFieldPrecio.getValue()				
-    				);
-    		
-    		Pedidos p = new Pedidos();
-    		p.modificarProdToPed(prod,n);
-    		
-    		textFieldNombre.clear();
-    		textFieldPrecio.clear();
-    		textFieldNuevoNombre.clear();
-    		textFieldNuevoPrecio.clear();
-    		
-    		grid.setItems(p.getProductos());
-    		
-    		Notification.show("Producto capturado! Ya tenemos " + 
-    				p.getProductos().size() + "!!",
-    				Notification.TYPE_TRAY_NOTIFICATION);
-    		
-    		});*/
     	
     	   	
     	formLayout.addComponents(
