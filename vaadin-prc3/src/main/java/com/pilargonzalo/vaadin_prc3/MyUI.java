@@ -1,9 +1,10 @@
 package com.pilargonzalo.vaadin_prc3;
 
 import javax.servlet.annotation.WebServlet;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.data.ValueProvider;
+import com.vaadin.server.AbstractErrorMessage.ContentMode;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
@@ -13,10 +14,13 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
+
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -30,10 +34,13 @@ import com.vaadin.ui.Window;
 @Theme("mytheme")
 public class MyUI extends UI {
 	private Producto selectedProducto;
-	private Pedidos p = new Pedidos();
+	private Stock p = new Stock();
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
+		//AppLayout applayout = new AppLayout();
+		
+		
 		Grid<Producto> grid = new Grid<Producto>();
 		VerticalLayout verticalLayout = new VerticalLayout();
 		verticalLayout.setMargin(false);
@@ -61,21 +68,12 @@ public class MyUI extends UI {
 			p.deleteProdToPed(selectedProducto);
 			grid.setItems(p.getProductos());
 			removeWindow(subWindow);
-			
-	
 			Producto prod = new Producto(textFieldNuevoNombre.getValue(), textFieldNuevoPrecio.getValue());
 			p.addProdToPed(prod);
 			textFieldNuevoNombre.clear();
 			textFieldNuevoPrecio.clear();
-
-			grid.setItems(p.getProductos());
-
-			Notification.show("Producto capturado! Ya tenemos " + p.getProductos().size() + "!!",
-					Notification.TYPE_TRAY_NOTIFICATION);		
+			grid.setItems(p.getProductos());	
 		});
-		
-		
-
 
 		subContent.addComponents(labelNombre, labelPrecio,buttonDelete, textFieldNuevoNombre,textFieldNuevoPrecio,buttonModificar);
 
@@ -84,7 +82,6 @@ public class MyUI extends UI {
 		// addWindow(subWindow);
 
 		/* TABLE */
-
 		grid.addColumn(Producto::getNombre).setCaption("Nombre");
 		grid.addColumn(Producto::getPrecio).setCaption("Precio");
 		grid.setSelectionMode(SelectionMode.SINGLE);
@@ -103,15 +100,10 @@ public class MyUI extends UI {
 		});
 
 		/* FORM */
-
 		FormLayout formLayout = new FormLayout();
-
 		TextField textFieldNombre = new TextField("Nombre");
 		TextField textFieldPrecio = new TextField("Precio");
-		// TextField textFieldNuevoNombre = new TextField("Nuevo Nombre");
-		// TextField textFieldNuevoPrecio = new TextField("Nuevo Precio");
 		Button buttonAddProducto = new Button("Añadir");
-		// Button buttonModProducto = new Button("Modificar");
 
 		buttonAddProducto.addClickListener(e -> {
 
@@ -129,14 +121,18 @@ public class MyUI extends UI {
 
 		});
 
-		formLayout.addComponents(textFieldNombre, textFieldPrecio, buttonAddProducto
-		// textFieldNuevoNombre,
-		// textFieldNuevoPrecio,
-		// buttonModProducto
-		);
+		formLayout.addComponents(textFieldNombre, textFieldPrecio, buttonAddProducto);
 
 		horizontalLayout.addComponents(l, grid, formLayout);
-		setContent(horizontalLayout);
+		
+		TabSheet tab = new TabSheet();
+		VerticalLayout tab1 = new VerticalLayout();
+		tab.addTab(tab1, "Etiqueta 1");
+		VerticalLayout tab2 = new VerticalLayout();
+		tab.addTab(tab2, "Etiqueta 2");
+		tab.addTab(formLayout, "Formulario");
+		tab.addTab(grid, "Tabla");
+		setContent(tab);
 
 	}
 
