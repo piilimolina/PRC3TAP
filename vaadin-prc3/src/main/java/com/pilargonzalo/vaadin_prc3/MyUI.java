@@ -12,6 +12,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Layout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
@@ -31,14 +32,25 @@ public class MyUI extends UI {
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         Grid <Producto> grid = new Grid <Producto>();
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setMargin(false);
+        Label l = new Label("Pilar Molina Tirado");
+        l.setContentMode(com.vaadin.shared.ui.ContentMode.HTML);
+        
+        
+        
+    	
+    	
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         Window subWindow = new Window("Detalles del producto");
         VerticalLayout subContent = new VerticalLayout();
-        
         Label labelNombre = new Label();
         Label labelPrecio = new Label();
         
-        Button buttonDelete = new Button("Delete Producto");
+        Button buttonDelete = new Button("Delete");
+        Button buttonModificar= new Button("Modificar");
+        TextField textFieldNuevoNombre = new TextField("Nuevo Nombre");
+    	TextField textFieldNuevoPrecio = new TextField("Nuevo Precio");
         
         buttonDelete.addClickListener(e -> {
         	Pedidos p = new Pedidos();
@@ -47,8 +59,20 @@ public class MyUI extends UI {
         	removeWindow(subWindow);
         });
         
+        buttonModificar.addBlurListener(e -> {
+        	Producto n = new Producto(
+    				textFieldNuevoNombre.getValue(), 
+    				textFieldNuevoPrecio.getValue()
+    				);
+        	
+        	Pedidos p = new Pedidos();
+        	p.modificarProdToPed(selectedProducto, n);
+        	grid.setItems(p.getProductos());
+        	removeWindow(subWindow);
+        });
+        
       
-        subContent.addComponents(labelNombre, labelPrecio, buttonDelete);
+        subContent.addComponents(labelNombre, labelPrecio, buttonDelete, buttonModificar);
         
         
         subWindow.center();
@@ -56,6 +80,7 @@ public class MyUI extends UI {
         //addWindow(subWindow);
     	
     	/* TABLE */
+        
     	grid.addColumn(Producto::getNombre).setCaption("Nombre");
     	grid.addColumn(Producto::getPrecio).setCaption("Precio");
     	grid.setSelectionMode(SelectionMode.SINGLE);
@@ -63,7 +88,7 @@ public class MyUI extends UI {
     	grid.addItemClickListener(event -> {
     		
     		selectedProducto = event.getItem();
-    		
+
         	//Notification.show("Value: " + event.getItem());
         	labelNombre.setValue(selectedProducto.getNombre());
         	labelPrecio.setValue(selectedProducto.getPrecio());
@@ -78,12 +103,14 @@ public class MyUI extends UI {
     	
     	/* FORM */
     	
-    	
     	FormLayout formLayout = new FormLayout();
     	
     	TextField textFieldNombre = new TextField("Nombre");
     	TextField textFieldPrecio = new TextField("Precio");
+    	//TextField textFieldNuevoNombre = new TextField("Nuevo Nombre");
+    	//TextField textFieldNuevoPrecio = new TextField("Nuevo Precio");
     	Button buttonAddProducto = new Button("Añadir");
+    	//Button buttonModProducto = new Button("Modificar");
     			
     	buttonAddProducto.addClickListener(e -> {
     		
@@ -92,8 +119,10 @@ public class MyUI extends UI {
     				textFieldPrecio.getValue()				
     				);
     		
+    		
     		Pedidos p = new Pedidos();
     		p.addProdToPed(prod);
+    		
     		
     		textFieldNombre.clear();
     		textFieldPrecio.clear();
@@ -109,18 +138,47 @@ public class MyUI extends UI {
     	});
     	
     	
+    	//Jejejejejeje modificar
+    	/*buttonModProducto.addClickListener(e -> {
+    		Producto n = new Producto(
+    				textFieldNuevoNombre.getValue(), 
+    				textFieldNuevoPrecio.getValue()
+    				);
+    		
+    		Producto prod = new Producto(
+    				textFieldNombre.getValue(),
+    				textFieldPrecio.getValue()				
+    				);
+    		
+    		Pedidos p = new Pedidos();
+    		p.modificarProdToPed(prod,n);
+    		
+    		textFieldNombre.clear();
+    		textFieldPrecio.clear();
+    		textFieldNuevoNombre.clear();
+    		textFieldNuevoPrecio.clear();
+    		
+    		grid.setItems(p.getProductos());
+    		
+    		Notification.show("Producto capturado! Ya tenemos " + 
+    				p.getProductos().size() + "!!",
+    				Notification.TYPE_TRAY_NOTIFICATION);
+    		
+    		});*/
     	
+    	   	
     	formLayout.addComponents(
     			textFieldNombre, 
     			textFieldPrecio, 
     			buttonAddProducto
+    			//textFieldNuevoNombre,
+    			//textFieldNuevoPrecio,
+    			//buttonModProducto
     	);
     	
-    
-    	horizontalLayout.addComponents(grid, formLayout);
     	
     	
-    	
+    	horizontalLayout.addComponents(l,grid, formLayout);
     	setContent(horizontalLayout);
     	
       
@@ -131,6 +189,7 @@ public class MyUI extends UI {
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
     public static class MyUIServlet extends VaadinServlet {
+    	
     }
     
     
