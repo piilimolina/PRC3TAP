@@ -48,14 +48,36 @@ public class MyUI extends UI {
 
 		Button buttonDelete = new Button("Delete");
 		Button buttonModificar = new Button("Modificar");
+		TextField textFieldNuevoNombre = new TextField("Nombre");
+		TextField textFieldNuevoPrecio = new TextField("Precio");
 
 		buttonDelete.addClickListener(e -> {
-			p.deleteProdToP(selectedProducto);
+			p.deleteProdToPed(selectedProducto);
 			grid.setItems(p.getProductos());
 			removeWindow(subWindow);
 		});
+		
+		buttonModificar.addClickListener(e -> {
+			p.deleteProdToPed(selectedProducto);
+			grid.setItems(p.getProductos());
+			removeWindow(subWindow);
+			
+	
+			Producto prod = new Producto(textFieldNuevoNombre.getValue(), textFieldNuevoPrecio.getValue());
+			p.addProdToPed(prod);
+			textFieldNuevoNombre.clear();
+			textFieldNuevoPrecio.clear();
 
-		subContent.addComponents(labelNombre, labelPrecio, buttonDelete, buttonModificar);
+			grid.setItems(p.getProductos());
+
+			Notification.show("Producto capturado! Ya tenemos " + p.getProductos().size() + "!!",
+					Notification.TYPE_TRAY_NOTIFICATION);		
+		});
+		
+		
+
+
+		subContent.addComponents(labelNombre, labelPrecio,buttonDelete, textFieldNuevoNombre,textFieldNuevoPrecio,buttonModificar);
 
 		subWindow.center();
 		subWindow.setContent(subContent);

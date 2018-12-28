@@ -16,7 +16,7 @@ public class Pedidos {
 	}
 	
 	//Eliminar un producto del pedido
-	public void deleteProdToP(Producto p) {
+	public void deleteProdToPed(Producto p) {
 		productos.remove(p);
 	}	
 	//Mostrar resumen del pedido
