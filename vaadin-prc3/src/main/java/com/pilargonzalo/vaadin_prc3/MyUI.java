@@ -138,20 +138,21 @@ public class MyUI extends UI {
 		final String Euros = "€";
 		final String Dollars = "$";
 		
-		Label cambioDivisa = new Label();
+		Label labelDivisa = new Label();
+		labelDivisa.setCaption("Moneda actual:\t\t" + Euros);
 		
 		ButtonMoneda.addClickListener(e ->{
 			if (moneda == 0) { // € to $
 				for(Producto prod : stock.getProductos()) {
 					prod.setPrecio(prod.getPrecio() * 1.2);
 				}
-				ButtonMoneda.setCaption("Moneda actual:\t\t" + Dollars);
+				labelDivisa.setCaption("Moneda actual:\t\t" + Dollars);
 				moneda = 1;
 			}else{ // $ to €
 				for(Producto prod : stock.getProductos()) {
 					prod.setPrecio(prod.getPrecio() / 1.2);
 				}
-				ButtonMoneda.setCaption("Moneda actual:\t\t" + Euros);
+				labelDivisa.setCaption("Moneda actual:\t\t" + Euros);
 				moneda = 0;
 			}
 			grid.setItems(stock.getProductos());
@@ -160,7 +161,7 @@ public class MyUI extends UI {
 		formLayout.addComponents(textFieldNombre, textFieldPrecio, textFieldCantidad, buttonAddProducto);
 
 		horizontalLayout.addComponents(grid, formLayout);
-		verticalLayout.addComponents(ButtonMoneda, horizontalLayout);
+		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout);
 		setContent(verticalLayout);
 	}
 
