@@ -5,7 +5,7 @@ public class Componente {
 	private String nombreComp;
 	private int cantidadComp;
 	
-	public Componente() {
+	public Componente(String nombreComp, int cantidadComp) {
 		// TODO Auto-generated constructor stub
 		super();
 		this.nombreComp = nombreComp;
