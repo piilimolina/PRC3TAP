@@ -9,11 +9,12 @@ public class Producto {
 	public  int cantidad;
 	private ArrayList<Componente> componente = new ArrayList<>();
 	
-	public Producto(String nombre, Double precio, int cantidad) {
+	public Producto(String nombre, Double precio, int cantidad, ArrayList<Componente> componente) {
 		super(); 
 		this.nombre = nombre;
 		this.precio = precio;
 		this.cantidad = cantidad;
+		this.componente = componente;
 	}
 
 	public int getCantidad() {

@@ -1,5 +1,7 @@
 package com.pilargonzalo.vaadin_prc3;
 
+import java.util.ArrayList;
+
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
@@ -33,6 +35,8 @@ public class MyUI extends UI {
 	private Producto selectedProducto;
 	private Stock stock = Stock.getInstance();
 	private int moneda = 0;
+	private ArrayList<Componente> componente = new ArrayList<>();
+	private ArrayList<Componente> reset = new ArrayList<>();
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -84,6 +88,8 @@ public class MyUI extends UI {
 
 			removeWindow(subWindow);
 			addWindow(subWindow);
+			
+			gridC.setItems(selectedProducto.getComponente());
 		});
 
 		/* ---------- TABLA DE COMPONENTES ---------- */
@@ -143,7 +149,7 @@ public class MyUI extends UI {
 			double nuevoPrecio = Double.parseDouble(textFieldNuevoPrecio.getValue());
 			int nuevaCantidad = Integer.parseInt(textFieldNuevoCantidad.getValue());
 
-			Producto prod = new Producto(textFieldNuevoNombre.getValue(), nuevoPrecio, nuevaCantidad);
+			Producto prod = new Producto(textFieldNuevoNombre.getValue(), nuevoPrecio, nuevaCantidad, null);
 			stock.addProdToStock(prod);
 			textFieldNuevoNombre.clear();
 			textFieldNuevoPrecio.clear();
@@ -166,29 +172,33 @@ public class MyUI extends UI {
 		buttonAddProducto.addClickListener(e -> {
 			double precio = Double.parseDouble(textFieldPrecio.getValue());
 			int cantidad = Integer.parseInt(textFieldCantidad.getValue());
-			Producto prod = new Producto(textFieldNombre.getValue(), precio, cantidad);
+			Producto prod = new Producto(textFieldNombre.getValue(), precio, cantidad, componente);
 
 			stock.addProdToStock(prod);
 			textFieldNombre.clear();
 			textFieldPrecio.clear();
 			textFieldCantidad.clear();
-
+			componente = reset;
+			
 			gridP.setItems(stock.getProductos());
+			gridC.setItems(componente);
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
 		});
 
 		
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR COMPONENTE" ---------- */
 		Button buttonAddComponente = new Button("Añadir Componente");
-		buttonAddComponente.addClickListener(c -> {
-			int cantidadComp = Integer.parseInt(textFieldCantidad.getValue());
-			Componente comp = new Componente(textFieldNombre.getValue(), cantidadComp);
+		buttonAddComponente.addClickListener(e -> {
+			int cantidadComp = Integer.parseInt(textFieldCantidadComp.getValue());
+			Componente comp = new Componente(textFieldNombreComp.getValue(), cantidadComp);
 
+			componente.add(comp);
 			textFieldNombreComp.clear();
 			textFieldCantidadComp.clear();
-
+			
+			gridC.setItems(componente);
 			Notification.show("Componente añadido!" /* Ya tenemos " + stock.getProductos().size() + "!!" */);
-
+			
 		});
 
 		
