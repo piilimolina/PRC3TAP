@@ -32,28 +32,30 @@ import com.vaadin.ui.Window;
 @Theme("mytheme")
 public class MyUI extends UI {
 	private Producto selectedProducto;
-	private Stock stock = new Stock();
+	private Stock stock = Stock.getInstance();
+	private int moneda = 0;
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
-		/*
-		 * VerticalLayout verticalLayout = new VerticalLayout();
-		 * verticalLayout.setMargin(false); Label l = new Label("Pilar Molina Tirado");
-		 * l.setContentMode(com.vaadin.shared.ui.ContentMode.HTML);
-		 */
+
 		Grid<Producto> grid = new Grid<Producto>();
 
-		/* VENTADA DE DETALLES DEL PRODUCTO */
+		VerticalLayout verticalLayout = new VerticalLayout();
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		
+		
+		/* VENTADA DE DETALLES DEL PRODUCTO */
 		Window subWindow = new Window("Detalles del producto");
 		VerticalLayout subContent = new VerticalLayout();
 		Label labelNombre = new Label();
 		Label labelPrecio = new Label();
+		Label labelCantidad = new Label();
 
 		Button buttonDelete = new Button("Delete");
 		Button buttonModificar = new Button("Modificar");
 		TextField textFieldNuevoNombre = new TextField("Nombre");
 		TextField textFieldNuevoPrecio = new TextField("Precio");
+		TextField textFieldNuevoCantidad = new TextField("Cantidad");
 
 		/* FUNCIONALIDAD BOTÓN "DELETE" */
 		buttonDelete.addClickListener(e -> {
@@ -69,10 +71,13 @@ public class MyUI extends UI {
 			removeWindow(subWindow);
 
 			double nuevoPrecio = Double.parseDouble(textFieldNuevoPrecio.getValue());
-			Producto prod = new Producto(textFieldNuevoNombre.getValue(), nuevoPrecio);
+			int nuevaCantidad = Integer.parseInt(textFieldNuevoCantidad.getValue());
+			
+			Producto prod = new Producto(textFieldNuevoNombre.getValue(), nuevoPrecio, nuevaCantidad);
 			stock.addProdToStock(prod);
 			textFieldNuevoNombre.clear();
 			textFieldNuevoPrecio.clear();
+			textFieldNuevoCantidad.clear();
 
 			grid.setItems(stock.getProductos());
 
@@ -80,8 +85,7 @@ public class MyUI extends UI {
 					Notification.TYPE_TRAY_NOTIFICATION);
 		});
 
-		subContent.addComponents(labelNombre, labelPrecio, buttonDelete, textFieldNuevoNombre, textFieldNuevoPrecio,
-				buttonModificar);
+		subContent.addComponents(labelNombre, labelPrecio, labelCantidad, buttonDelete, textFieldNuevoNombre, textFieldNuevoPrecio, textFieldNuevoCantidad, buttonModificar);
 
 		subWindow.center();
 		subWindow.setContent(subContent);
@@ -89,8 +93,10 @@ public class MyUI extends UI {
 
 		/* TABLA DE PRODUCTOS */
 		/* INSERCIÓN EN LA TABLA */
+		grid.setCaption("Lista de Productos");
 		grid.addColumn(Producto::getNombre).setCaption("Nombre");
 		grid.addColumn(Producto::getPrecio).setCaption("Precio");
+		grid.addColumn(Producto::getCantidad).setCaption("Cantidad");
 		grid.setSelectionMode(SelectionMode.SINGLE);
 
 		grid.addItemClickListener(event -> {
@@ -99,6 +105,7 @@ public class MyUI extends UI {
 			// Notification.show("Value: " + event.getItem());
 			labelNombre.setValue(selectedProducto.getNombre());
 			labelPrecio.setValue(selectedProducto.getPrecio().toString());
+			labelCantidad.setValue(String.valueOf(selectedProducto.getCantidad()));
 
 			removeWindow(subWindow);
 			addWindow(subWindow);
@@ -106,25 +113,55 @@ public class MyUI extends UI {
 
 		/* FORMULARIO DE AÑADIR NUEVO PRODUCTO */
 		FormLayout formLayout = new FormLayout();
+		formLayout.setCaption("Formulario Añadir Producto");
 		TextField textFieldNombre = new TextField("Nombre");
 		TextField textFieldPrecio = new TextField("Precio");
+		TextField textFieldCantidad = new TextField("Cantidad");
 		Button buttonAddProducto = new Button("Añadir");
 
 		buttonAddProducto.addClickListener(e -> {
 			double precio = Double.parseDouble(textFieldPrecio.getValue());
-			Producto prod = new Producto(textFieldNombre.getValue(), precio);
+			int cantidad = Integer.parseInt(textFieldCantidad.getValue());
+			Producto prod = new Producto(textFieldNombre.getValue(), precio, cantidad);
+			
 			stock.addProdToStock(prod);
 			textFieldNombre.clear();
 			textFieldPrecio.clear();
+			textFieldCantidad.clear();
 
 			grid.setItems(stock.getProductos());
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
 		});
 		
-		formLayout.addComponents(textFieldNombre, textFieldPrecio, buttonAddProducto);
+		/* BOTÓN CAMBIO DE DIVISA */
+		Button ButtonMoneda = new Button("Cambio de Divisa");
+		final String Euros = "€";
+		final String Dollars = "$";
+		
+		Label cambioDivisa = new Label();
+		
+		ButtonMoneda.addClickListener(e ->{
+			if (moneda == 0) { // € to $
+				for(Producto prod : stock.getProductos()) {
+					prod.setPrecio(prod.getPrecio() * 1.2);
+				}
+				ButtonMoneda.setCaption("Moneda actual:\t\t" + Dollars);
+				moneda = 1;
+			}else{ // $ to €
+				for(Producto prod : stock.getProductos()) {
+					prod.setPrecio(prod.getPrecio() / 1.2);
+				}
+				ButtonMoneda.setCaption("Moneda actual:\t\t" + Euros);
+				moneda = 0;
+			}
+			grid.setItems(stock.getProductos());
+		});
+		
+		formLayout.addComponents(textFieldNombre, textFieldPrecio, textFieldCantidad, buttonAddProducto);
 
 		horizontalLayout.addComponents(grid, formLayout);
-		setContent(horizontalLayout);
+		verticalLayout.addComponents(ButtonMoneda, horizontalLayout);
+		setContent(verticalLayout);
 	}
 
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

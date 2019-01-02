@@ -1,14 +1,24 @@
 package com.pilargonzalo.vaadin_prc3;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-public class Stock {
-	public List<Producto> productos;
-	public Stock() {
-		productos = new ArrayList<>();
-	}
-	
+
+public class Stock{
+
+    private static Stock singleton;
+    private ArrayList<Producto> productos = new ArrayList<>();
+
+    //private
+    public Stock() {
+        
+    }
+
+    public static Stock getInstance() {
+        if(singleton == null)
+            singleton = new Stock();
+
+        return singleton;
+    }
+
 	//Añadir un producto al stock
 	public void addProdToStock(Producto p) {
 		productos.add(p);
@@ -19,11 +29,7 @@ public class Stock {
 		productos.remove(p);
 	}	
 	//Mostrar resumen del pedido
-	public List<Producto> getProductos(){
+	public ArrayList<Producto> getProductos(){
 		return productos;
 	}
-	
-
-	
-	
 }
