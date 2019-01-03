@@ -35,6 +35,7 @@ public class MyUI extends UI {
 	private Producto selectedProducto;
 	private Stock stock = Stock.getInstance();
 	private int moneda = 0;
+	private int contadorCrafteos;
 	private ArrayList<Componente> componente = new ArrayList<>();
 	private ArrayList<Componente> reset = new ArrayList<>();
 
@@ -46,6 +47,7 @@ public class MyUI extends UI {
 
 		VerticalLayout verticalLayout = new VerticalLayout();
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
+		HorizontalLayout horizontalLayout2 = new HorizontalLayout();
 
 		
 		
@@ -54,14 +56,14 @@ public class MyUI extends UI {
 		// ----------------------------------------------------------------------------------//
 		// --------------------------------- POP UP ----------------------------------------//
 		// --------------------------------------------------------------------------------//
-		
+
 		/* ---------- VENTADA DE DETALLES DEL PRODUCTO ---------- */
 		Window subWindow = new Window("Detalles del producto");
 		VerticalLayout subContent = new VerticalLayout();
 		Label labelNombre = new Label();
 		Label labelPrecio = new Label();
 		Label labelCantidad = new Label();
-		
+
 		
 		
 		
@@ -69,7 +71,7 @@ public class MyUI extends UI {
 		// ----------------------------------------------------------------------------------//
 		// --------------------------------- TABLAS ----------------------------------------//
 		// --------------------------------------------------------------------------------//
-		
+
 		/* ---------- TABLA DE PRODUCTOS ---------- */
 		/* ---------- INSERCIÓN EN LA TABLA ---------- */
 		gridP.setCaption("Lista de Productos");
@@ -88,7 +90,7 @@ public class MyUI extends UI {
 
 			removeWindow(subWindow);
 			addWindow(subWindow);
-			
+
 			gridC.setItems(selectedProducto.getComponente());
 		});
 
@@ -97,15 +99,16 @@ public class MyUI extends UI {
 		gridC.setCaption("Componentes");
 		gridC.addColumn(Componente::getNombreComp).setCaption("Nombre");
 		gridC.addColumn(Componente::getCantidadComp).setCaption("Cantidad");
-		
-		
-		
 
-
+		
+		
+		
+		
+		
 		// ----------------------------------------------------------------------------------//
-		// ---------------------------------- FORMS ----------------------------------------//
+		// -------------------------------- FORMLAYOUT -------------------------------------//
 		// --------------------------------------------------------------------------------//
-		
+
 		/* ---------- FORMULARIO DE AÑADIR NUEVO PRODUCTO ---------- */
 		/* ---------- Y SUS COMPONENTES ---------- */
 		FormLayout formLayout = new FormLayout();
@@ -117,7 +120,14 @@ public class MyUI extends UI {
 		TextField textFieldNombreComp = new TextField("Nombre");
 		TextField textFieldCantidadComp = new TextField("Cantidad");
 
-		
+		/* ---------- FORMULARIO DE AÑADIR NUEVO PRODUCTO ---------- */
+		/* ---------- Y SUS COMPONENTES ---------- */
+		FormLayout formLayout2 = new FormLayout();
+		formLayout2.setCaption("Formulario Del Crafteo");
+		TextField textFieldCrafteo = new TextField("Crafteo");
+		TextField textFieldCantidadCrafteo = new TextField("CantidadCrafteo");
+		TextField textFieldNumeroCrafteos = new TextField("NumeroCrafteos");
+
 		
 		
 		
@@ -129,7 +139,6 @@ public class MyUI extends UI {
 		TextField textFieldNuevoPrecio = new TextField("Precio");
 		TextField textFieldNuevoCantidad = new TextField("Cantidad");
 
-		
 		/* ---------- FUNCIONALIDAD BOTÓN "DELETE" ---------- */
 		Button buttonDelete = new Button("Delete");
 		buttonDelete.addClickListener(e -> {
@@ -137,7 +146,6 @@ public class MyUI extends UI {
 			gridP.setItems(stock.getProductos());
 			removeWindow(subWindow);
 		});
-		
 
 		/* ---------- FUNCIONALIDAD BOTÓN "MODIFICAR" ---------- */
 		Button buttonModificar = new Button("Modificar");
@@ -166,7 +174,6 @@ public class MyUI extends UI {
 		subWindow.center();
 		subWindow.setContent(subContent);
 
-		
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR PRODUCTO" ---------- */
 		Button buttonAddProducto = new Button("Añadir Producto");
 		buttonAddProducto.addClickListener(e -> {
@@ -179,13 +186,12 @@ public class MyUI extends UI {
 			textFieldPrecio.clear();
 			textFieldCantidad.clear();
 			componente = reset;
-			
+
 			gridP.setItems(stock.getProductos());
 			gridC.setItems(componente);
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
 		});
 
-		
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR COMPONENTE" ---------- */
 		Button buttonAddComponente = new Button("Añadir Componente");
 		buttonAddComponente.addClickListener(e -> {
@@ -195,13 +201,12 @@ public class MyUI extends UI {
 			componente.add(comp);
 			textFieldNombreComp.clear();
 			textFieldCantidadComp.clear();
-			
+
 			gridC.setItems(componente);
 			Notification.show("Componente añadido!" /* Ya tenemos " + stock.getProductos().size() + "!!" */);
-			
+
 		});
 
-		
 		/* ---------- FUNCIONALIDAD BOTÓN "CAMBIAR DIVISA" ---------- */
 		Button ButtonMoneda = new Button("Cambio de Divisa");
 		final String Euros = "€";
@@ -227,16 +232,38 @@ public class MyUI extends UI {
 			gridP.setItems(stock.getProductos());
 		});
 
+		/* ---------- FUNCIONALIDAD BOTÓN "VALIDAR PRDUCTO PARA CRAFTEO" ---------- */
+		Button ButtonProdCraft = new Button("Validar Producto");
+		ButtonProdCraft.addClickListener(e -> {
+			for (Producto prod : stock.getProductos()) {
+				if (textFieldCrafteo.getValue().toString().equals(prod.getNombre()) && prod.getComponente() != null) {
+					gridC.setItems(prod.getComponente());
+					
+
+				} else {
+					Notification.show("No se puede craftear ese producto!!!");
+				}
+			}
+
+		});
+		
+		
+		/* ---------- FUNCIONALIDAD BOTÓN "CRAFTEAR PRODUCTO" ---------- */
+
 		
 		
 		
 		// ----------------------------------------------------------------------------------//
-		// ------------------------ GENERACIÓN EN PANTALLA ---------------------------------//
+		// ------------------------------------- FRONT -------------------------------------//
 		// --------------------------------------------------------------------------------//
 		formLayout.addComponents(textFieldNombre, textFieldPrecio, textFieldCantidad, buttonAddProducto,
 				textFieldNombreComp, textFieldCantidadComp, buttonAddComponente);
+
+		formLayout2.addComponents(textFieldCrafteo, textFieldNumeroCrafteos, textFieldCantidadCrafteo);
+
 		horizontalLayout.addComponents(gridP, formLayout, gridC);
-		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout);
+		horizontalLayout2.addComponents(formLayout2);
+		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft);
 
 		setContent(verticalLayout);
 	}
