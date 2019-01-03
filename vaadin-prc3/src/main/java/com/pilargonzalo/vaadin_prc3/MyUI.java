@@ -35,7 +35,6 @@ public class MyUI extends UI {
 	private Producto selectedProducto;
 	private Stock stock = Stock.getInstance();
 	private int moneda = 0;
-	private int contadorCrafteos;
 	private ArrayList<Componente> componente = new ArrayList<>();
 
 
@@ -170,7 +169,7 @@ public class MyUI extends UI {
 
 		subContent.addComponents(labelNombre, labelPrecio, labelCantidad, buttonDelete, textFieldNuevoNombre,
 				textFieldNuevoPrecio, textFieldNuevoCantidad, buttonModificar);
-		subWindow.center();
+		subWindow.setPosition(1500, 10);;
 		subWindow.setContent(subContent);
 
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR PRODUCTO" ---------- */
@@ -204,7 +203,7 @@ public class MyUI extends UI {
 			textFieldCantidadComp.clear();
 
 			gridC.setItems(componente);
-			Notification.show("Componente añadido!" /* Ya tenemos " + stock.getProductos().size() + "!!" */);
+			Notification.show("Componente añadido!");
 
 		});
 
@@ -240,20 +239,25 @@ public class MyUI extends UI {
 
 		/* ---------- FUNCIONALIDAD BOTÓN "CRAFTEAR PRODUCTO" ---------- */
 		Button ButtonProdCraft = new Button("Craftear Producto");
-		ArrayList<Componente> auxiliar = new ArrayList<>();
-
+		
 		ButtonProdCraft.addClickListener(e -> {
+			ArrayList<Componente> auxiliar = new ArrayList<>();
+			int cantCrafteos = Integer.parseInt(textFieldCantidadCrafteo.getValue());
+			
 			for (Producto prod : stock.getProductos()) {
 				if (textFieldCrafteo.getValue().toString().equals(prod.getNombre()) && prod.getComponente() != null) {
 					gridC.setItems(prod.getComponente());
 					
 					for (Componente comp : prod.getComponente()) {
 						for (Producto prodAux : stock.getProductos()) {
-							if(comp.getNombreComp().equals(prodAux.getNombre()) && prodAux.getCantidad()>=comp.getCantidadComp()) {
+							if(comp.getNombreComp().equals(prodAux.getNombre()) && prodAux.getCantidad()>=comp.getCantidadComp()*cantCrafteos) {
 								auxiliar.add(comp);
 								
+							/*} else if (prodAux.getCantidad()<comp.getCantidadComp()){
+								Notification.show("No se pueden craftear tantos productos!!!, pruebe con menos");*/
+							
 							} else {
-								Notification.show("No se puede craftear ese producto!!!");
+								Notification.show("No se pueden craftear ese producto!!!");
 							}
 						}
 					}
@@ -262,11 +266,11 @@ public class MyUI extends UI {
 						for (Componente comp : prod.getComponente()) {
 							for (Producto prodAux : stock.getProductos()) {
 								if(comp.getNombreComp().equals(prodAux.getNombre())){
-									prodAux.setCantidad(prodAux.getCantidad() - comp.getCantidadComp());
+									prodAux.setCantidad(prodAux.getCantidad() - comp.getCantidadComp()*cantCrafteos);
 								}
 							}
 						}
-						prod.setCantidad(prod.getCantidad() + 1);
+						prod.setCantidad(prod.getCantidad() + 1*cantCrafteos);
 					}
 					
 				}
