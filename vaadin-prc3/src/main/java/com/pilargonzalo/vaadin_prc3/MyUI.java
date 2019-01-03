@@ -37,7 +37,7 @@ public class MyUI extends UI {
 	private int moneda = 0;
 	private int contadorCrafteos;
 	private ArrayList<Componente> componente = new ArrayList<>();
-	private ArrayList<Componente> reset = new ArrayList<>();
+
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -124,9 +124,8 @@ public class MyUI extends UI {
 		/* ---------- Y SUS COMPONENTES ---------- */
 		FormLayout formLayout2 = new FormLayout();
 		formLayout2.setCaption("Formulario Del Crafteo");
-		TextField textFieldCrafteo = new TextField("Crafteo");
-		TextField textFieldCantidadCrafteo = new TextField("CantidadCrafteo");
-		TextField textFieldNumeroCrafteos = new TextField("NumeroCrafteos");
+		TextField textFieldCrafteo = new TextField("Producto a Craftear");
+		TextField textFieldCantidadCrafteo = new TextField("Número de Crafteos");
 
 		
 		
@@ -177,6 +176,7 @@ public class MyUI extends UI {
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR PRODUCTO" ---------- */
 		Button buttonAddProducto = new Button("Añadir Producto");
 		buttonAddProducto.addClickListener(e -> {
+			ArrayList<Componente> reset = new ArrayList<>();
 			double precio = Double.parseDouble(textFieldPrecio.getValue());
 			int cantidad = Integer.parseInt(textFieldCantidad.getValue());
 			Producto prod = new Producto(textFieldNombre.getValue(), precio, cantidad, componente);
@@ -185,9 +185,10 @@ public class MyUI extends UI {
 			textFieldNombre.clear();
 			textFieldPrecio.clear();
 			textFieldCantidad.clear();
-			componente = reset;
 
-			gridP.setItems(stock.getProductos());
+			gridP.setItems(stock.getProductos());			
+			gridC.setItems(componente);
+			componente = reset; // NO FUNCIONA MÁS DE UNA VEZ!
 			gridC.setItems(componente);
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
 		});
@@ -231,24 +232,52 @@ public class MyUI extends UI {
 			}
 			gridP.setItems(stock.getProductos());
 		});
+		
+		
+		
+		
+		
 
-		/* ---------- FUNCIONALIDAD BOTÓN "VALIDAR PRDUCTO PARA CRAFTEO" ---------- */
-		Button ButtonProdCraft = new Button("Validar Producto");
+		/* ---------- FUNCIONALIDAD BOTÓN "CRAFTEAR PRODUCTO" ---------- */
+		Button ButtonProdCraft = new Button("Craftear Producto");
+		ArrayList<Componente> auxiliar = new ArrayList<>();
+
 		ButtonProdCraft.addClickListener(e -> {
 			for (Producto prod : stock.getProductos()) {
 				if (textFieldCrafteo.getValue().toString().equals(prod.getNombre()) && prod.getComponente() != null) {
 					gridC.setItems(prod.getComponente());
 					
-
-				} else {
-					Notification.show("No se puede craftear ese producto!!!");
+					for (Componente comp : prod.getComponente()) {
+						for (Producto prodAux : stock.getProductos()) {
+							if(comp.getNombreComp().equals(prodAux.getNombre()) && prodAux.getCantidad()>=comp.getCantidadComp()) {
+								auxiliar.add(comp);
+								
+							} else {
+								Notification.show("No se puede craftear ese producto!!!");
+							}
+						}
+					}
+					
+					if(auxiliar.size() == prod.getComponente().size()) {
+						for (Componente comp : prod.getComponente()) {
+							for (Producto prodAux : stock.getProductos()) {
+								if(comp.getNombreComp().equals(prodAux.getNombre())){
+									prodAux.setCantidad(prodAux.getCantidad() - comp.getCantidadComp());
+								}
+							}
+						}
+						prod.setCantidad(prod.getCantidad() + 1);
+					}
+					
 				}
+				
 			}
 
+			gridP.setItems(stock.getProductos());
 		});
 		
 		
-		/* ---------- FUNCIONALIDAD BOTÓN "CRAFTEAR PRODUCTO" ---------- */
+
 
 		
 		
@@ -259,7 +288,7 @@ public class MyUI extends UI {
 		formLayout.addComponents(textFieldNombre, textFieldPrecio, textFieldCantidad, buttonAddProducto,
 				textFieldNombreComp, textFieldCantidadComp, buttonAddComponente);
 
-		formLayout2.addComponents(textFieldCrafteo, textFieldNumeroCrafteos, textFieldCantidadCrafteo);
+		formLayout2.addComponents(textFieldCrafteo, textFieldCantidadCrafteo);
 
 		horizontalLayout.addComponents(gridP, formLayout, gridC);
 		horizontalLayout2.addComponents(formLayout2);
