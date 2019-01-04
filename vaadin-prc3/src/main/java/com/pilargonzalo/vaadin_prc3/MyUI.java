@@ -37,14 +37,15 @@ import com.vaadin.ui.Window;
 public class MyUI extends UI {
 	private Producto selectedProducto;
 	private Stock stock = Stock.getInstance();
-	private int moneda = 0;
-	private double situEconomica = 1000;
+
 	private ArrayList<Componente> componente = new ArrayList<>();
 	private ArrayList<Transaccion> transacciones = new ArrayList<>();
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YY");
 	private String fecha = sdf.format(new Date()); 
 	
+	private double situEconomica = 1000;
+	private int moneda = 0;
 	final String Euros = "€";
 	final String Dollars = "$";
 
@@ -139,13 +140,19 @@ public class MyUI extends UI {
 		TextField textFieldNombreComp = new TextField("Nombre");
 		TextField textFieldCantidadComp = new TextField("Cantidad");
 
-		/* ---------- FORMULARIO DE AÑADIR NUEVO PRODUCTO ---------- */
-		/* ---------- Y SUS COMPONENTES ---------- */
+		/* ---------- FORMULARIO DE AÑADIR NUEVO CRAFTEO ---------- */
 		FormLayout formLayout2 = new FormLayout();
 		formLayout2.setCaption("Formulario Del Crafteo");
 		TextField textFieldCrafteo = new TextField("Producto a Craftear");
 		TextField textFieldCantidadCrafteo = new TextField("Número de Crafteos");
-
+		textFieldCantidadCrafteo.setValue("0");
+		
+		/* ---------- FORMULARIO DE INGRESOS/GASTOS MANUALES ---------- */
+		FormLayout formLayout3 = new FormLayout();
+		TextField textFieldIngreso = new TextField("Ingreso Manual");
+		textFieldIngreso.setValue("0");
+		TextField textFieldGasto = new TextField("Gasto Manual");
+		textFieldGasto.setValue("0");
 		
 		
 		
@@ -303,6 +310,7 @@ public class MyUI extends UI {
 							}
 						}
 						prod.setCantidad(prod.getCantidad() + 1*cantCrafteos);
+						
 						Transaccion tran = new Transaccion(fecha, textFieldCrafteo.getValue(), prod.getCantidad(), prod.getPrecio() - precioComponentes);
 						transacciones.add(tran);
 						
@@ -320,6 +328,20 @@ public class MyUI extends UI {
 		
 		
 
+		/* ---------- FUNCIONALIDAD BOTÓN "INGRESO/GASTO" ---------- */
+		Button buttonIngresoGasto = new Button("Efectuar", VaadinIcons.CASH);
+		buttonIngresoGasto.addClickListener(e -> {
+			double ingreso = Double.parseDouble(textFieldIngreso.getValue());
+			double gasto = Double.parseDouble(textFieldGasto.getValue());
+			
+			situEconomica = situEconomica + ingreso - gasto;
+			labelSituacionEconomica.setCaption("La situación económica es:\t\t" + situEconomica + Euros);
+			
+			Notification.show("Ingreso/Gasto efectuado!");
+
+		});
+		
+		
 		
 		
 		
@@ -331,10 +353,13 @@ public class MyUI extends UI {
 				textFieldNombreComp, textFieldCantidadComp, buttonAddComponente);
 
 		formLayout2.addComponents(textFieldCrafteo, textFieldCantidadCrafteo);
+		
+		formLayout3.addComponents(textFieldIngreso, textFieldGasto, buttonIngresoGasto);
 
 		horizontalLayout.addComponents(gridP, formLayout, gridC);
 		horizontalLayout2.addComponents(formLayout2);
-		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft, gridT, labelSituacionEconomica);
+		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft, 
+				gridT, labelSituacionEconomica, formLayout3);
 
 		setContent(verticalLayout);
 	}
