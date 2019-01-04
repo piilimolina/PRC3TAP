@@ -1,14 +1,15 @@
 package com.pilargonzalo.vaadin_prc3;
 
+import java.util.ArrayList;
 
 public class Transaccion {
 
 	public  String nombre;
 	public  int cantidad;
 	private String fecha;
-	private String beneficio;
+	private double beneficio;
 	
-	public Transaccion(String fecha, String nombre, int cantidad, String beneficio) {
+	public Transaccion(String fecha, String nombre, int cantidad, double beneficio) {
 		super(); 
 		this.nombre = nombre;
 		this.cantidad = cantidad;
@@ -41,11 +42,11 @@ public class Transaccion {
 		this.fecha = fecha;
 	}
 
-	public String getBeneficio() {
+	public double getBeneficio() {
 		return beneficio;
 	}
 
-	public void setBeneficio(String beneficio) {
+	public void setBeneficio(double beneficio) {
 		this.beneficio = beneficio;
 	}
 	

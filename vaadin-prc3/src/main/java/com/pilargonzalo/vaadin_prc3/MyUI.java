@@ -4,11 +4,11 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
@@ -38,10 +38,15 @@ public class MyUI extends UI {
 	private Producto selectedProducto;
 	private Stock stock = Stock.getInstance();
 	private int moneda = 0;
+	private double situEconomica = 1000;
 	private ArrayList<Componente> componente = new ArrayList<>();
+	private ArrayList<Transaccion> transacciones = new ArrayList<>();
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YY");
 	private String fecha = sdf.format(new Date()); 
+	
+	final String Euros = "€";
+	final String Dollars = "$";
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -64,8 +69,9 @@ public class MyUI extends UI {
 		Label labelCantidad = new Label();
 
 		
-		
-		
+		/* ---------- SITUACIÓN ECONÓNMICA ---------- */
+		Label labelSituacionEconomica = new Label();
+		labelSituacionEconomica.setCaption("La situación económica es:\t\t" + situEconomica + Euros);
 		
 		// ----------------------------------------------------------------------------------//
 		// --------------------------------- TABLAS ----------------------------------------//
@@ -152,7 +158,7 @@ public class MyUI extends UI {
 		TextField textFieldNuevoCantidad = new TextField("Cantidad");
 
 		/* ---------- FUNCIONALIDAD BOTÓN "DELETE" ---------- */
-		Button buttonDelete = new Button("Delete");
+		Button buttonDelete = new Button("Delete", VaadinIcons.TRASH);
 		buttonDelete.addClickListener(e -> {
 			stock.deleteProdToStock(selectedProducto);
 			gridP.setItems(stock.getProductos());
@@ -176,9 +182,7 @@ public class MyUI extends UI {
 			textFieldNuevoCantidad.clear();
 
 			gridP.setItems(stock.getProductos());
-
-			Notification.show("Producto capturado! Ya tenemos " + stock.getProductos().size() + "!!",
-					Notification.TYPE_TRAY_NOTIFICATION);
+			Notification.show("Producto modificado!");
 		});
 
 		subContent.addComponents(labelNombre, labelPrecio, labelCantidad, buttonDelete, textFieldNuevoNombre,
@@ -187,13 +191,17 @@ public class MyUI extends UI {
 		subWindow.setContent(subContent);
 
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR PRODUCTO" ---------- */
-		Button buttonAddProducto = new Button("Añadir Producto");
+		Button buttonAddProducto = new Button("Añadir Producto", VaadinIcons.EXCHANGE);
 		buttonAddProducto.addClickListener(e -> {
 			ArrayList<Componente> reset = new ArrayList<>();
 			double precio = Double.parseDouble(textFieldPrecio.getValue());
 			int cantidad = Integer.parseInt(textFieldCantidad.getValue());
 			Producto prod = new Producto(textFieldNombre.getValue(), precio, cantidad, componente);
-			Transaccion tran = new Transaccion(fecha, textFieldNombre.getValue(), cantidad, "-" + precio);
+			Transaccion tran = new Transaccion(fecha, textFieldNombre.getValue(), cantidad, precio*cantidad*-1);
+			transacciones.add(tran);
+			
+			situEconomica = situEconomica + precio*cantidad*-1; 
+			labelSituacionEconomica.setCaption("La situación económica es:\t\t" + situEconomica +  Euros);
 
 			stock.addProdToStock(prod);
 			textFieldNombre.clear();
@@ -202,14 +210,15 @@ public class MyUI extends UI {
 
 			gridP.setItems(stock.getProductos());			
 			gridC.setItems(componente);
-			gridT.setItems(tran);
-			componente = reset; // NO FUNCIONA MÁS DE UNA VEZ!
+			gridT.setItems(transacciones);
+			
+			componente = reset;
 			gridC.setItems(componente);
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
 		});
 
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR COMPONENTE" ---------- */
-		Button buttonAddComponente = new Button("Añadir Componente");
+		Button buttonAddComponente = new Button("Añadir Componente", VaadinIcons.PLUS_CIRCLE);
 		buttonAddComponente.addClickListener(e -> {
 			int cantidadComp = Integer.parseInt(textFieldCantidadComp.getValue());
 			Componente comp = new Componente(textFieldNombreComp.getValue(), cantidadComp);
@@ -224,9 +233,8 @@ public class MyUI extends UI {
 		});
 
 		/* ---------- FUNCIONALIDAD BOTÓN "CAMBIAR DIVISA" ---------- */
-		Button ButtonMoneda = new Button("Cambio de Divisa");
-		final String Euros = "€";
-		final String Dollars = "$";
+		Button ButtonMoneda = new Button("Cambio de Divisa", VaadinIcons.MONEY_EXCHANGE);
+
 
 		Label labelDivisa = new Label();
 		labelDivisa.setCaption("Moneda actual:\t\t" + Euros);
@@ -236,12 +244,20 @@ public class MyUI extends UI {
 				for (Producto prod : stock.getProductos()) {
 					prod.setPrecio(prod.getPrecio() * 1.2);
 				}
+				for(Transaccion tran: transacciones) {
+					tran.setBeneficio(tran.getBeneficio() * 1.2);
+				}
+				
 				labelDivisa.setCaption("Moneda actual:\t\t" + Dollars);
 				moneda = 1;
 			} else { // $ to €
 				for (Producto prod : stock.getProductos()) {
 					prod.setPrecio(prod.getPrecio() / 1.2);
 				}
+				for(Transaccion tran: transacciones) {
+					tran.setBeneficio(tran.getBeneficio() * 1.2);
+				}
+				
 				labelDivisa.setCaption("Moneda actual:\t\t" + Euros);
 				moneda = 0;
 			}
@@ -254,11 +270,13 @@ public class MyUI extends UI {
 		
 
 		/* ---------- FUNCIONALIDAD BOTÓN "CRAFTEAR PRODUCTO" ---------- */
-		Button ButtonProdCraft = new Button("Craftear Producto");
+		Button ButtonProdCraft = new Button("Craftear Producto", VaadinIcons.COGS);
 		
 		ButtonProdCraft.addClickListener(e -> {
 			ArrayList<Componente> auxiliar = new ArrayList<>();
 			int cantCrafteos = Integer.parseInt(textFieldCantidadCrafteo.getValue());
+			double precioComponentes = 0;
+			
 			
 			for (Producto prod : stock.getProductos()) {
 				if (textFieldCrafteo.getValue().toString().equals(prod.getNombre()) && prod.getComponente() != null) {
@@ -269,9 +287,6 @@ public class MyUI extends UI {
 							if(comp.getNombreComp().equals(prodAux.getNombre()) && prodAux.getCantidad()>=comp.getCantidadComp()*cantCrafteos) {
 								auxiliar.add(comp);
 								
-							} else if (prodAux.getCantidad()<comp.getCantidadComp()){
-								Notification.show("No se pueden craftear tantos productos!!!, pruebe con menos");
-							
 							} else {
 								Notification.show("No se pueden craftear ese producto!!!");
 							}
@@ -283,10 +298,16 @@ public class MyUI extends UI {
 							for (Producto prodAux : stock.getProductos()) {
 								if(comp.getNombreComp().equals(prodAux.getNombre())){
 									prodAux.setCantidad(prodAux.getCantidad() - comp.getCantidadComp()*cantCrafteos);
+									precioComponentes =+  prodAux.getPrecio();
 								}
 							}
 						}
 						prod.setCantidad(prod.getCantidad() + 1*cantCrafteos);
+						Transaccion tran = new Transaccion(fecha, textFieldCrafteo.getValue(), prod.getCantidad(), prod.getPrecio() - precioComponentes);
+						transacciones.add(tran);
+						
+						situEconomica = situEconomica + (prod.getPrecio() - precioComponentes); 
+						labelSituacionEconomica.setCaption("La situación económica es:\t\t" + situEconomica + Euros);
 					}
 					
 				}
@@ -294,11 +315,12 @@ public class MyUI extends UI {
 			}
 
 			gridP.setItems(stock.getProductos());
+			gridT.setItems(transacciones);
 		});
 		
 		
 
-
+		
 		
 		
 		
@@ -312,7 +334,7 @@ public class MyUI extends UI {
 
 		horizontalLayout.addComponents(gridP, formLayout, gridC);
 		horizontalLayout2.addComponents(formLayout2);
-		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft, gridT);
+		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft, gridT, labelSituacionEconomica);
 
 		setContent(verticalLayout);
 	}
