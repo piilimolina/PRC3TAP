@@ -1,7 +1,10 @@
 package com.pilargonzalo.vaadin_prc3;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
@@ -37,19 +40,16 @@ public class MyUI extends UI {
 	private int moneda = 0;
 	private ArrayList<Componente> componente = new ArrayList<>();
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	private String fecha = sdf.format(new Date()); 
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
-
-		Grid<Producto> gridP = new Grid<Producto>();
-		Grid<Componente> gridC = new Grid<Componente>();
 
 		VerticalLayout verticalLayout = new VerticalLayout();
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		HorizontalLayout horizontalLayout2 = new HorizontalLayout();
 
-		
-		
 		
 		
 		// ----------------------------------------------------------------------------------//
@@ -71,8 +71,13 @@ public class MyUI extends UI {
 		// --------------------------------- TABLAS ----------------------------------------//
 		// --------------------------------------------------------------------------------//
 
+		Grid<Producto> gridP = new Grid<Producto>();
+		Grid<Componente> gridC = new Grid<Componente>();
+		Grid<Transaccion> gridT = new Grid<Transaccion>();
+		
 		/* ---------- TABLA DE PRODUCTOS ---------- */
 		/* ---------- INSERCIÓN EN LA TABLA ---------- */
+		
 		gridP.setCaption("Lista de Productos");
 		gridP.addColumn(Producto::getNombre).setCaption("Nombre");
 		gridP.addColumn(Producto::getPrecio).setCaption("Precio");
@@ -95,11 +100,20 @@ public class MyUI extends UI {
 
 		/* ---------- TABLA DE COMPONENTES ---------- */
 		/* ---------- INSERCION EN LA TABLA ---------- */
+		
 		gridC.setCaption("Componentes");
 		gridC.addColumn(Componente::getNombreComp).setCaption("Nombre");
 		gridC.addColumn(Componente::getCantidadComp).setCaption("Cantidad");
 
 		
+		/* ---------- TABLA HISTÓRICA ---------- */
+		/* ---------- INSERCION EN LA TABLA ---------- */
+		gridT.setCaption("Histórico");
+		gridT.addColumn(Transaccion::getFecha).setCaption("Fecha");
+		gridT.addColumn(Transaccion::getNombre).setCaption("Nombre");
+		gridT.addColumn(Transaccion::getCantidad).setCaption("Cantidad");
+		gridT.addColumn(Transaccion::getBeneficio).setCaption("Beneficio");
+
 		
 		
 		
@@ -179,6 +193,7 @@ public class MyUI extends UI {
 			double precio = Double.parseDouble(textFieldPrecio.getValue());
 			int cantidad = Integer.parseInt(textFieldCantidad.getValue());
 			Producto prod = new Producto(textFieldNombre.getValue(), precio, cantidad, componente);
+			Transaccion tran = new Transaccion(fecha, textFieldNombre.getValue(), cantidad, "-" + precio);
 
 			stock.addProdToStock(prod);
 			textFieldNombre.clear();
@@ -187,6 +202,7 @@ public class MyUI extends UI {
 
 			gridP.setItems(stock.getProductos());			
 			gridC.setItems(componente);
+			gridT.setItems(tran);
 			componente = reset; // NO FUNCIONA MÁS DE UNA VEZ!
 			gridC.setItems(componente);
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
@@ -253,8 +269,8 @@ public class MyUI extends UI {
 							if(comp.getNombreComp().equals(prodAux.getNombre()) && prodAux.getCantidad()>=comp.getCantidadComp()*cantCrafteos) {
 								auxiliar.add(comp);
 								
-							/*} else if (prodAux.getCantidad()<comp.getCantidadComp()){
-								Notification.show("No se pueden craftear tantos productos!!!, pruebe con menos");*/
+							} else if (prodAux.getCantidad()<comp.getCantidadComp()){
+								Notification.show("No se pueden craftear tantos productos!!!, pruebe con menos");
 							
 							} else {
 								Notification.show("No se pueden craftear ese producto!!!");
@@ -296,7 +312,7 @@ public class MyUI extends UI {
 
 		horizontalLayout.addComponents(gridP, formLayout, gridC);
 		horizontalLayout2.addComponents(formLayout2);
-		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft);
+		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft, gridT);
 
 		setContent(verticalLayout);
 	}
