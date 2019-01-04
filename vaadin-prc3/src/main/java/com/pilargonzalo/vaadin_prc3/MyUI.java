@@ -1,7 +1,10 @@
 package com.pilargonzalo.vaadin_prc3;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -54,23 +57,19 @@ public class MyUI extends UI {
 =======
 	private Stock stock = Stock.getInstance();
 	private int moneda = 0;
-	private int contadorCrafteos;
 	private ArrayList<Componente> componente = new ArrayList<>();
-	private ArrayList<Componente> reset = new ArrayList<>();
+
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	private String fecha = sdf.format(new Date()); 
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
-
-		Grid<Producto> gridP = new Grid<Producto>();
-		Grid<Componente> gridC = new Grid<Componente>();
 
 		VerticalLayout verticalLayout = new VerticalLayout();
 >>>>>>> Integración
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		HorizontalLayout horizontalLayout2 = new HorizontalLayout();
 
-		
-		
 		
 		
 		// ----------------------------------------------------------------------------------//
@@ -92,8 +91,13 @@ public class MyUI extends UI {
 		// --------------------------------- TABLAS ----------------------------------------//
 		// --------------------------------------------------------------------------------//
 
+		Grid<Producto> gridP = new Grid<Producto>();
+		Grid<Componente> gridC = new Grid<Componente>();
+		Grid<Transaccion> gridT = new Grid<Transaccion>();
+		
 		/* ---------- TABLA DE PRODUCTOS ---------- */
 		/* ---------- INSERCIÓN EN LA TABLA ---------- */
+		
 		gridP.setCaption("Lista de Productos");
 		gridP.addColumn(Producto::getNombre).setCaption("Nombre");
 		gridP.addColumn(Producto::getPrecio).setCaption("Precio");
@@ -116,11 +120,20 @@ public class MyUI extends UI {
 
 		/* ---------- TABLA DE COMPONENTES ---------- */
 		/* ---------- INSERCION EN LA TABLA ---------- */
+		
 		gridC.setCaption("Componentes");
 		gridC.addColumn(Componente::getNombreComp).setCaption("Nombre");
 		gridC.addColumn(Componente::getCantidadComp).setCaption("Cantidad");
 
 		
+		/* ---------- TABLA HISTÓRICA ---------- */
+		/* ---------- INSERCION EN LA TABLA ---------- */
+		gridT.setCaption("Histórico");
+		gridT.addColumn(Transaccion::getFecha).setCaption("Fecha");
+		gridT.addColumn(Transaccion::getNombre).setCaption("Nombre");
+		gridT.addColumn(Transaccion::getCantidad).setCaption("Cantidad");
+		gridT.addColumn(Transaccion::getBeneficio).setCaption("Beneficio");
+
 		
 		
 		
@@ -144,9 +157,8 @@ public class MyUI extends UI {
 		/* ---------- Y SUS COMPONENTES ---------- */
 		FormLayout formLayout2 = new FormLayout();
 		formLayout2.setCaption("Formulario Del Crafteo");
-		TextField textFieldCrafteo = new TextField("Crafteo");
-		TextField textFieldCantidadCrafteo = new TextField("CantidadCrafteo");
-		TextField textFieldNumeroCrafteos = new TextField("NumeroCrafteos");
+		TextField textFieldCrafteo = new TextField("Producto a Craftear");
+		TextField textFieldCantidadCrafteo = new TextField("Número de Crafteos");
 
 		
 		
@@ -212,8 +224,12 @@ public class MyUI extends UI {
 
 		subContent.addComponents(labelNombre, labelPrecio, labelCantidad, buttonDelete, textFieldNuevoNombre,
 				textFieldNuevoPrecio, textFieldNuevoCantidad, buttonModificar);
+<<<<<<< HEAD
 >>>>>>> Integración
 		subWindow.center();
+=======
+		subWindow.setPosition(1500, 10);;
+>>>>>>> Integración
 		subWindow.setContent(subContent);
 
 <<<<<<< HEAD
@@ -229,18 +245,26 @@ public class MyUI extends UI {
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR PRODUCTO" ---------- */
 		Button buttonAddProducto = new Button("Añadir Producto");
 		buttonAddProducto.addClickListener(e -> {
+			ArrayList<Componente> reset = new ArrayList<>();
 			double precio = Double.parseDouble(textFieldPrecio.getValue());
 			int cantidad = Integer.parseInt(textFieldCantidad.getValue());
 			Producto prod = new Producto(textFieldNombre.getValue(), precio, cantidad, componente);
+			Transaccion tran = new Transaccion(fecha, textFieldNombre.getValue(), cantidad, "-" + precio);
 
 			stock.addProdToStock(prod);
 			textFieldNombre.clear();
 			textFieldPrecio.clear();
 			textFieldCantidad.clear();
+<<<<<<< HEAD
 			componente = reset;
 >>>>>>> Integración
+=======
+>>>>>>> Integración
 
-			gridP.setItems(stock.getProductos());
+			gridP.setItems(stock.getProductos());			
+			gridC.setItems(componente);
+			gridT.setItems(tran);
+			componente = reset; // NO FUNCIONA MÁS DE UNA VEZ!
 			gridC.setItems(componente);
 			Notification.show("Producto añadido! Ya tenemos " + stock.getProductos().size() + "!!");
 		});
@@ -256,7 +280,7 @@ public class MyUI extends UI {
 			textFieldCantidadComp.clear();
 
 			gridC.setItems(componente);
-			Notification.show("Componente añadido!" /* Ya tenemos " + stock.getProductos().size() + "!!" */);
+			Notification.show("Componente añadido!");
 
 <<<<<<< HEAD
 			removeWindow(subWindow);
@@ -326,24 +350,57 @@ public class MyUI extends UI {
 			}
 			gridP.setItems(stock.getProductos());
 		});
+		
+		
+		
+		
+		
 
-		/* ---------- FUNCIONALIDAD BOTÓN "VALIDAR PRDUCTO PARA CRAFTEO" ---------- */
-		Button ButtonProdCraft = new Button("Validar Producto");
+		/* ---------- FUNCIONALIDAD BOTÓN "CRAFTEAR PRODUCTO" ---------- */
+		Button ButtonProdCraft = new Button("Craftear Producto");
+		
 		ButtonProdCraft.addClickListener(e -> {
+			ArrayList<Componente> auxiliar = new ArrayList<>();
+			int cantCrafteos = Integer.parseInt(textFieldCantidadCrafteo.getValue());
+			
 			for (Producto prod : stock.getProductos()) {
 				if (textFieldCrafteo.getValue().toString().equals(prod.getNombre()) && prod.getComponente() != null) {
 					gridC.setItems(prod.getComponente());
 					
-
-				} else {
-					Notification.show("No se puede craftear ese producto!!!");
+					for (Componente comp : prod.getComponente()) {
+						for (Producto prodAux : stock.getProductos()) {
+							if(comp.getNombreComp().equals(prodAux.getNombre()) && prodAux.getCantidad()>=comp.getCantidadComp()*cantCrafteos) {
+								auxiliar.add(comp);
+								
+							} else if (prodAux.getCantidad()<comp.getCantidadComp()){
+								Notification.show("No se pueden craftear tantos productos!!!, pruebe con menos");
+							
+							} else {
+								Notification.show("No se pueden craftear ese producto!!!");
+							}
+						}
+					}
+					
+					if(auxiliar.size() == prod.getComponente().size()) {
+						for (Componente comp : prod.getComponente()) {
+							for (Producto prodAux : stock.getProductos()) {
+								if(comp.getNombreComp().equals(prodAux.getNombre())){
+									prodAux.setCantidad(prodAux.getCantidad() - comp.getCantidadComp()*cantCrafteos);
+								}
+							}
+						}
+						prod.setCantidad(prod.getCantidad() + 1*cantCrafteos);
+					}
+					
 				}
+				
 			}
 
+			gridP.setItems(stock.getProductos());
 		});
 		
 		
-		/* ---------- FUNCIONALIDAD BOTÓN "CRAFTEAR PRODUCTO" ---------- */
+
 
 		
 		
@@ -354,11 +411,11 @@ public class MyUI extends UI {
 		formLayout.addComponents(textFieldNombre, textFieldPrecio, textFieldCantidad, buttonAddProducto,
 				textFieldNombreComp, textFieldCantidadComp, buttonAddComponente);
 
-		formLayout2.addComponents(textFieldCrafteo, textFieldNumeroCrafteos, textFieldCantidadCrafteo);
+		formLayout2.addComponents(textFieldCrafteo, textFieldCantidadCrafteo);
 
 		horizontalLayout.addComponents(gridP, formLayout, gridC);
 		horizontalLayout2.addComponents(formLayout2);
-		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft);
+		verticalLayout.addComponents(ButtonMoneda, labelDivisa, horizontalLayout, horizontalLayout2, ButtonProdCraft, gridT);
 
 		setContent(verticalLayout);
 >>>>>>> Integración
