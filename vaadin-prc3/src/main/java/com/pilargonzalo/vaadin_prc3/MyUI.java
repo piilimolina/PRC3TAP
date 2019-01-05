@@ -44,7 +44,7 @@ public class MyUI extends UI {
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YY");
 	private String fecha = sdf.format(new Date()); 
 	
-	private double situEconomica = 1000;
+	private double situEconomica = 0;
 	private int moneda = 0;
 	final String Euros = "€";
 	final String Dollars = "$";
@@ -145,7 +145,7 @@ public class MyUI extends UI {
 		formLayout2.setCaption("Formulario Del Crafteo");
 		TextField textFieldCrafteo = new TextField("Producto a Craftear");
 		TextField textFieldCantidadCrafteo = new TextField("Número de Crafteos");
-		textFieldCantidadCrafteo.setValue("0");
+		textFieldCantidadCrafteo.setValue("1");
 		
 		/* ---------- FORMULARIO DE INGRESOS/GASTOS MANUALES ---------- */
 		FormLayout formLayout3 = new FormLayout();
