@@ -1,6 +1,5 @@
 package com.pilargonzalo.vaadin_prc3;
 
-import java.util.ArrayList;
 
 public class Transaccion {
 
