@@ -13,6 +13,7 @@ class Pruebas {
 	public void vaciarpruebas() {
 		Stock productos = Stock.getInstance();
 		productos.vaciar();
+		assertEquals(productos.getProductos().size(), 0);
 	}
 	
 	@Test
