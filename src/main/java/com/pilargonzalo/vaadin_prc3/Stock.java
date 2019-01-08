@@ -32,4 +32,9 @@ public class Stock{
 	public ArrayList<Producto> getProductos(){
 		return productos;
 	}
+	
+	// Funcion vaciar
+	public void vaciar() {
+		productos.clear();
+	}
 }

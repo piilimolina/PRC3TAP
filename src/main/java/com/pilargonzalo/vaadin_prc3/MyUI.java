@@ -35,6 +35,12 @@ import com.vaadin.ui.Window;
 
 @Theme("mytheme")
 public class MyUI extends UI {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
 	private Producto selectedProducto;
 	private Stock stock = Stock.getInstance();
 
@@ -367,6 +373,11 @@ public class MyUI extends UI {
 	@WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
 	@VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
 	public static class MyUIServlet extends VaadinServlet {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 
 	}
 
