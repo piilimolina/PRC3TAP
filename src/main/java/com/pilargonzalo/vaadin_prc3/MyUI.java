@@ -5,12 +5,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.annotation.WebServlet;
+<<<<<<< HEAD
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 <<<<<<< HEAD
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.AbstractErrorMessage.ContentMode;
 =======
+import com.vaadin.icons.VaadinIcons;
+>>>>>>> Integración
+=======
+
+import com.vaadin.annotations.Theme;
+import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.icons.VaadinIcons;
 >>>>>>> Integración
 import com.vaadin.server.VaadinRequest;
@@ -22,13 +29,19 @@ import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
+<<<<<<< HEAD
 import com.vaadin.ui.TabSheet;
+=======
+>>>>>>> Integración
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+<<<<<<< HEAD
 import com.vaadin.ui.themes.ValoTheme;
 
+=======
+>>>>>>> Integración
 
 /**
  * This UI is the application entry point. A UI may either represent a browser
@@ -44,6 +57,7 @@ import com.vaadin.ui.themes.ValoTheme;
 public class MyUI extends UI {
 	private Producto selectedProducto;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	private Stock p = new Stock();
 
 	@Override
@@ -58,6 +72,8 @@ public class MyUI extends UI {
 		l.setContentMode(com.vaadin.shared.ui.ContentMode.HTML);
 
 =======
+=======
+>>>>>>> Integración
 	private Stock stock = Stock.getInstance();
 
 	private ArrayList<Componente> componente = new ArrayList<>();
@@ -75,6 +91,9 @@ public class MyUI extends UI {
 	protected void init(VaadinRequest vaadinRequest) {
 
 		VerticalLayout verticalLayout = new VerticalLayout();
+<<<<<<< HEAD
+>>>>>>> Integración
+=======
 >>>>>>> Integración
 		HorizontalLayout horizontalLayout = new HorizontalLayout();
 		HorizontalLayout horizontalLayout2 = new HorizontalLayout();
@@ -188,6 +207,7 @@ public class MyUI extends UI {
 		TextField textFieldNuevoCantidad = new TextField("Cantidad");
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		buttonDelete.addClickListener(e -> {
 			p.deleteProdToStock(selectedProducto);
 			grid.setItems(p.getProductos());
@@ -208,6 +228,8 @@ public class MyUI extends UI {
 		subContent.addComponents(labelNombre, labelPrecio,buttonDelete, textFieldNuevoNombre,textFieldNuevoPrecio,buttonModificar);
 
 =======
+=======
+>>>>>>> Integración
 		/* ---------- FUNCIONALIDAD BOTÓN "DELETE" ---------- */
 		Button buttonDelete = new Button("Delete", VaadinIcons.TRASH);
 		buttonDelete.addClickListener(e -> {
@@ -239,6 +261,7 @@ public class MyUI extends UI {
 		subContent.addComponents(labelNombre, labelPrecio, labelCantidad, buttonDelete, textFieldNuevoNombre,
 				textFieldNuevoPrecio, textFieldNuevoCantidad, buttonModificar);
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> Integración
 		subWindow.center();
 =======
@@ -256,6 +279,11 @@ public class MyUI extends UI {
 
 			selectedProducto = event.getItem();
 =======
+=======
+		subWindow.setPosition(1500, 10);;
+		subWindow.setContent(subContent);
+
+>>>>>>> Integración
 		/* ---------- FUNCIONALIDAD BOTÓN "AÑADIR PRODUCTO" ---------- */
 		Button buttonAddProducto = new Button("Añadir Producto", VaadinIcons.EXCHANGE);
 		buttonAddProducto.addClickListener(e -> {
@@ -274,7 +302,10 @@ public class MyUI extends UI {
 			textFieldPrecio.clear();
 			textFieldCantidad.clear();
 <<<<<<< HEAD
+<<<<<<< HEAD
 			componente = reset;
+>>>>>>> Integración
+=======
 >>>>>>> Integración
 =======
 >>>>>>> Integración
@@ -301,6 +332,7 @@ public class MyUI extends UI {
 			gridC.setItems(componente);
 			Notification.show("Componente añadido!");
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 			removeWindow(subWindow);
 			addWindow(subWindow);
@@ -343,6 +375,8 @@ public class MyUI extends UI {
 		setContent(tab);
 
 =======
+=======
+>>>>>>> Integración
 		});
 
 		/* ---------- FUNCIONALIDAD BOTÓN "CAMBIAR DIVISA" ---------- */
@@ -468,6 +502,9 @@ public class MyUI extends UI {
 				gridT, labelSituacionEconomica, formLayout3);
 
 		setContent(verticalLayout);
+<<<<<<< HEAD
+>>>>>>> Integración
+=======
 >>>>>>> Integración
 	}
 

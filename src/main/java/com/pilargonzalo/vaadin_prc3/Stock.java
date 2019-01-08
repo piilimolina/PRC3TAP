@@ -1,7 +1,10 @@
 package com.pilargonzalo.vaadin_prc3;
 import java.util.ArrayList;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.util.List;
+=======
+>>>>>>> Integración
 =======
 >>>>>>> Integración
 

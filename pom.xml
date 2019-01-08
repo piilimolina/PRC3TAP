@@ -42,7 +42,10 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+<<<<<<< HEAD
 	
+=======
+>>>>>>> Integración
 
 	<dependencies>
 		<dependency>
@@ -67,7 +70,10 @@
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-themes</artifactId>
 		</dependency>
+<<<<<<< HEAD
 		
+=======
+>>>>>>> Integración
 	</dependencies>
 
 	<build>
